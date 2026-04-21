@@ -2,147 +2,186 @@
 
 A Model Context Protocol (MCP) server for storing and retrieving personal knowledge, notes, contacts, and context.
 
-## What is this?
+## Quick Start
 
-This MCP server provides a knowledge base that can be connected to AI tools like OpenCode. It allows:
-- **Storage**: Store contacts, notes, documentation, conversations
-- **Retrieval**: Search and query your data via MCP tools
-- **Management**: Add, update, delete entries via CLI or MCP
+### 1. Run the Server
 
-## Setup
-
-### 1. Create Virtual Environment
-
+**Local (OpenCode/CLI):**
 ```bash
 cd ~/Desktop/github/knowledge-mcp
-python3 -m venv venv
 source venv/bin/activate
-pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org mcp sqlite-utils
+python server.py --mode stdio
 ```
 
-### 2. Test the Server
-
+**HTTP (Remote access):**
 ```bash
-# Test MCP server directly
-echo '{"jsonrpc":"2.0","id":"1","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' | python3 server.py
+python http_server.py
+# Server runs at http://localhost:8000/mcp
 ```
 
-### 3. Connect to OpenCode
+### 2. Connect to OpenCode
 
 ```bash
 opencode mcp add
-# Enter: base / Local / /home/arslan/Desktop/github/knowledge-mcp/venv/bin/python /home/arslan/Desktop/github/knowledge-mcp/server.py
+# Name: base
+# Type: Local  
+# Command: /home/arslan/Desktop/github/knowledge-mcp/venv/bin/python /home/arslan/Desktop/github/knowledge-mcp/server.py
 ```
 
-Or add to `~/.config/opencode/opencode.json`:
-
-```json
-{
-  "mcp": {
-    "base": {
-      "type": "local",
-      "command": [
-        "/home/arslan/Desktop/github/knowledge-mcp/venv/bin/python",
-        "/home/arslan/Desktop/github/knowledge-mcp/server.py"
-      ]
-    }
-  }
-}
-```
-
-### 4. Add System Prompt (Optional)
-
-Add to `~/.config/opencode/opencode.json` to auto-check knowledge base:
-
-```json
-{
-  "mode": {
-    "build": {
-      "prompt": "You have a knowledge base MCP called 'base' connected. Before answering questions about personal info (friends, family, contacts, passwords), work info (projects, meetings), or any question where the answer might be in the user's data, ALWAYS use the MCP tools first: base_search_knowledge, base_add_entry, base_update_entry."
-    }
-  }
-}
-```
-
-## Usage
-
-### Via OpenCode (Recommended)
-
-Just ask questions:
-- "What's my WiFi password?"
-- "Tell me about my friend"
-- "What meetings do I have scheduled?"
-
-The MCP will automatically search and retrieve relevant info.
-
-### Via CLI
+### 3. Add Your First Data
 
 ```bash
+# Via CLI
 cd ~/Desktop/github/knowledge-mcp
 source venv/bin/activate
+python cli.py add "My WiFi" "Password: mypass123" --category network --tags wifi,home
+python cli.py add "Friend - John" "Phone: 555-1234" --category contacts --tags friend
+python cli.py add "Project Notes" "Key decisions..." --category work --tags project
+```
 
-# List all entries
+### 4. Search Your Data
+
+In OpenCode, just ask:
+- "What's my WiFi password?"
+- "Tell me about John"
+- "What project notes do I have?"
+
+---
+
+## Data Organization
+
+### Categories
+
+Organize your entries by category:
+
+| Category | Use For |
+|----------|---------|
+| `contacts` | Friends, family, colleagues |
+| `work` | Projects, meetings, notes |
+| `personal` | Passwords, subscriptions |
+| `reference` | Commands, documentation |
+| `learn` | Study notes, resources |
+| `finance` | Budgets, accounts |
+
+### Tags
+
+Add tags for flexible searching:
+- `friend`, `work`, `urgent`
+- `password`, `wifi`, `api`
+- `project-x`, `meeting-notes`
+
+### Examples
+
+```bash
+# Add a contact
+python cli.py add "Friend - Ouwen" "Phone: xxx, Notes: teacher of Diddy" --category contacts --tags friend,ouwen
+
+# Add work notes
+python cli.py add "Sprint Planning" "Features: 1. Auth, 2. Dashboard" --category work --tags sprint,planning
+
+# Add password
+python cli.py add "Gmail Password" "myemail@gmail.com / password123" --category personal --tags password,email
+```
+
+---
+
+## Access Methods
+
+### 1. OpenCode (Local)
+
+```bash
+opencode mcp add base
+# Use "base" MCP for knowledge search
+```
+
+### 2. HTTP Server (Remote)
+
+```bash
+# Start server
+python http_server.py
+
+# Access via:
+# http://localhost:8000/mcp
+```
+
+### 3. CLI (Direct)
+
+```bash
 python cli.py list
-
-# Search entries
+python cli.py add "Title" "Content"
 python cli.py search
-
-# Add entry
-python cli.py add "Title" "Content" --category work --tags tag1,tag2
-
-# Update entry
-python cli.py update 1 --title "New Title"
-
-# Delete entry
-python cli.py delete 1
-
-# List categories
 python cli.py categories
 ```
+
+---
 
 ## MCP Tools
 
 | Tool | Description |
 |------|-------------|
-| `search_knowledge` | Search entries by query and/or category |
-| `add_entry` | Add new entry (title, content, category, tags) |
-| `update_entry` | Update existing entry |
-| `delete_entry` | Delete entry by ID |
-| `list_categories` | List all categories |
+| `search_knowledge` | Search by query, category, tags |
+| `add_entry_kb` | Add new entry |
+| `list_kb_categories` | List all categories |
 
-## Database Schema
+---
 
-```sql
-CREATE TABLE entries (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    content TEXT NOT NULL,
-    category TEXT DEFAULT 'general',
-    tags TEXT DEFAULT '',
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL
-);
+## Multi-User Support
+
+Each user has their own database:
+- `data/default.db` - default user
+- `data/arslan.db` - user "arslan"
+- `data/username.db` - any username
+
+```bash
+# CLI for specific user
+python cli.py --user arslan add "Note" "Content"
 ```
+
+---
+
+## Project Structure
+
+```
+knowledge-mcp/
+├── server.py       # MCP server (stdio mode)
+├── http_server.py  # MCP server (HTTP mode)
+├── cli.py          # CLI tool
+├── data/           # SQLite databases (per user)
+│   └── default.db
+├── README.md
+└── venv/           # Python environment
+```
+
+---
 
 ## Troubleshooting
 
 ### MCP not connecting
-
-1. Check status: `opencode mcp list`
-2. Check logs: `cat ~/.local/share/opencode/log/2026-*.log | grep -i mcp`
-3. Test server manually: Run the command and check for errors
-
-### Module not found errors
-
-Make sure you're using the venv Python, not system Python:
-```
-/home/arslan/Desktop/github/knowledge-mcp/venv/bin/python
+```bash
+opencode mcp list
+# Check if "base" shows ✓ connected
 ```
 
-## Future Enhancements
+### HTTP server won't start
+```bash
+# Check port is free
+lsof -i :8000
 
-- [ ] Cloud hosting (for multi-device access)
-- [ ] Web UI (n8n integration)
-- [ ] Document ingestion (PDF, TXT)
-- [ ] Multiple workspaces
-- [ ] Sync with other MCP clients (Cursor, Cline)
+# Kill if needed
+kill $(lsof -t -i:8000)
+```
+
+### No data shows up
+```bash
+# Check what's in database
+python cli.py list
+```
+
+---
+
+## Next Steps
+
+- [ ] Add more sample data
+- [ ] Set up HTTP server for remote access
+- [ ] Connect to other clients (Claude Desktop, Cursor)
+- [ ] Add document ingestion (PDF, URLs)

@@ -2,53 +2,80 @@
 
 ## Original Idea vs RAG
 
-### What We Built (Original)
+### What User Asked For (Original Request)
+
+User wanted:
+- "a MCP in which there is all the contacts and it is connected to all major LLM providers"
+- "MCPIn which there is all the contexts" 
+- "main context data db like a knowledge base"
+- "database that can be added and removed"
+- Store: documents (if needed), conversations, important stuff
+- Flexible - "how the user wants and how the conversation the user wants"
+- Access via web or TUI with MCP
+
+**This is a knowledge base MCP - NOT RAG.**
+
+---
+
+### What We Built
 
 A **knowledge base MCP server** with:
 - SQLite database
-- Basic search (`LIKE %query%` - substring matching)
-- CRUD operations
+- Basic search (substring matching with LIKE queries)
+- CRUD operations (add, update, delete entries)
 - Categories and tags
+- CLI for direct access
+- Connected to OpenCode as "base" MCP
 
-**NOT RAG** - Just a key-value store with basic text search.
+**This is what was asked for** - simple knowledge base with basic search.
 
 ---
 
-### What RAG Requires
+### What RAG Is (Different Project)
 
 **RAG** = Retrieval-Augmented Generation
+
+Requires:
 - Embeddings (vector representations of text)
 - Semantic similarity search (cosine similarity)
-- Chunked documents
-- Vector database for storage
+- Chunked documents with overlap
+- Vector database (LanceDB, Qdrant, pgvector)
+- Understanding conceptual meaning, not just keywords
 
-**This is a different project** - Not what was originally asked.
+**This is NOT what was originally asked for.**
 
 ---
 
-### Can Both Exist Together?
+### Why The Confusion
 
-Yes - hybrid approach:
+The user explored RAG via the explore agent, but the original request was simpler:
+- Store contacts, notes, conversations
+- Basic search
+- MCP-accessible
+
+RAG would be a future enhancement, not the original scope.
+
+---
+
+### Can Both Exist?
+
+Yes, future hybrid approach:
 
 1. **Keep SQLite** for structured data (contacts, passwords, notes)
-2. **Add LanceDB/Qdrant** for semantic search on documents
-3. Use **both** in queries
-
-### Or Separate?
-
-Option A: Keep this as lightweight knowledge base (current)
-Option B: Build separate RAG system
+2. **Add vector DB** for semantic search on documents
+3. Use **both** depending on query type
 
 ---
 
-## Key Distinction
+## Summary
 
-| Feature | Knowledge Base | RAG |
-|---------|----------------|-----|
-| Search | Substring match | Semantic similarity |
-| Storage | SQLite | Vector DB |
-| Documents | Manual entry | Auto-chunked |
-| Understanding | Keyword | Conceptual |
+| | Knowledge Base | RAG |
+|-|----------------|-----|
+| **Search** | Substring match | Semantic similarity |
+| **Storage** | SQLite | Vector DB |
+| **Documents** | Manual entry | Auto-chunked |
+| **Understanding** | Keyword based | Conceptual |
+| **Status** | ✅ Built | Future option |
 
-**User's original request:** Knowledge base MCP (done)
-**RAG:** Different feature - future option
+**Original scope:** Knowledge base MCP (done)
+**Future:** RAG enhancement (different project)
