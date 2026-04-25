@@ -5,7 +5,7 @@
 ### What User Asked For (Original Request)
 
 User wanted:
-- "a MCP in which there is all the contacts and it is connected to all major LLM providers"
+- "a MCP in which there is all the context and it is connected to all major LLM providers"
 - "MCPIn which there is all the contexts" 
 - "main context data db like a knowledge base"
 - "database that can be added and removed"
@@ -49,7 +49,7 @@ Requires:
 ### Why The Confusion
 
 The user explored RAG via the explore agent, but the original request was simpler:
-- Store contacts, notes, conversations
+- Store context, notes, conversations
 - Basic search
 - MCP-accessible
 
@@ -61,7 +61,7 @@ RAG would be a future enhancement, not the original scope.
 
 Yes, future hybrid approach:
 
-1. **Keep SQLite** for structured data (contacts, passwords, notes)
+1. **Keep SQLite** for structured data (contexts, passwords, notes)
 2. **Add vector DB** for semantic search on documents
 3. Use **both** depending on query type
 

@@ -1,6 +1,6 @@
 # Knowledge Base MCP
 
-A Model Context Protocol (MCP) server for storing and retrieving personal knowledge, notes, contacts, and context.
+A Model Context Protocol (MCP) server for storing and retrieving personal knowledge, notes, and context.
 
 ## Quick Start
 
@@ -35,7 +35,7 @@ opencode mcp add
 cd ~/Desktop/github/knowledge-mcp
 source venv/bin/activate
 python cli.py add "My WiFi" "Password: mypass123" --category network --tags wifi,home
-python cli.py add "Friend - John" "Phone: 555-1234" --category contacts --tags friend
+python cli.py add "Friend - John" "Phone: 555-1234" --category context --tags friend
 python cli.py add "Project Notes" "Key decisions..." --category work --tags project
 ```
 
@@ -56,7 +56,7 @@ Organize your entries by category:
 
 | Category | Use For |
 |----------|---------|
-| `contacts` | Friends, family, colleagues |
+| `context` | Friends, family, colleagues |
 | `work` | Projects, meetings, notes |
 | `personal` | Passwords, subscriptions |
 | `reference` | Commands, documentation |
@@ -73,8 +73,8 @@ Add tags for flexible searching:
 ### Examples
 
 ```bash
-# Add a contact
-python cli.py add "Friend - Ouwen" "Phone: xxx, Notes: teacher of Diddy" --category contacts --tags friend,ouwen
+# Add context
+python cli.py add "Friend - Ouwen" "Phone: xxx, Notes: teacher of Diddy" --category context --tags friend,ouwen
 
 # Add work notes
 python cli.py add "Sprint Planning" "Features: 1. Auth, 2. Dashboard" --category work --tags sprint,planning
