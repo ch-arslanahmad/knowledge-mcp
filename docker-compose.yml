@@ -1,0 +1,16 @@
+version: "3.8"
+
+# Docker Compose for knowledge-mcp
+# Usage: docker-compose up -d
+
+services:
+  knowledge-mcp:
+    build: .
+    image: knowledge-mcp
+    ports:
+      - "7777:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - KB_USER=default
+    restart: unless-stopped

@@ -4,6 +4,7 @@
 import argparse
 import asyncio
 import os
+import sys
 import sqlite3
 from datetime import datetime
 from pathlib import Path
@@ -11,7 +12,6 @@ from typing import Any, Optional
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.server.http import HttpServer
 from mcp.types import Tool, TextContent
 
 # Config
@@ -374,41 +374,17 @@ async def run_stdio():
         await app.run(read_stream, write_stream, app.create_initialization_options())
 
 
-async def run_http(host: str, port: int):
-    """Run as HTTP server (for remote access)."""
-    http_server = HttpServer(app)
-    await http_server.run(host=host, port=port)
-
-
 def main():
     parser = argparse.ArgumentParser(description="Knowledge Base MCP Server")
-    parser.add_argument(
-        "--mode", choices=["stdio", "http"], default="stdio", help="Server mode"
-    )
-    parser.add_argument("--host", default=DEFAULT_HOST, help="HTTP host")
-    parser.add_argument("--port", type=int, default=DEFAULT_PORT, help="HTTP port")
-    parser.add_argument(
-        "--user", default="default", help="Default user (for stdio mode)"
-    )
-    parser.add_argument(
-        "--db-dir", type=Path, default=DB_DIR, help="Database directory"
-    )
+    parser.add_argument("--user", default="default", help="Default user")
 
     args = parser.parse_args()
-
-    global DB_DIR
-    if args.db_dir:
-        DB_DIR = args.db_dir
 
     # Initialize default user's DB
     init_db(get_db_path(args.user))
 
-    if args.mode == "http":
-        print(f"Starting HTTP server on {args.host}:{args.port}")
-        asyncio.run(run_http(args.host, args.port))
-    else:
-        print("Starting stdio server...")
-        asyncio.run(run_stdio())
+    print("Starting stdio server...")
+    asyncio.run(run_stdio())
 
 
 if __name__ == "__main__":

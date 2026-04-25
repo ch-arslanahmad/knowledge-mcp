@@ -88,7 +88,7 @@ def add_entry(
 
 
 # MCP Server
-mcp = FastMCP("knowledge-base", json_response=True)
+mcp = FastMCP("knowledge-base")
 
 
 @mcp.tool()
@@ -129,7 +129,9 @@ def list_kb_categories(user: str = "default"):
 
 
 if __name__ == "__main__":
-    import uvicorn
+    import os
+
+    os.environ.setdefault("FASTMCP_JSON_RESPONSE", "true")
 
     print(f"Starting MCP server on http://0.0.0.0:{DEFAULT_PORT}")
-    uvicorn.run(mcp.app, host="0.0.0.0", port=DEFAULT_PORT, path="/mcp")
+    mcp.run(transport="http", host="0.0.0.0", port=DEFAULT_PORT)
